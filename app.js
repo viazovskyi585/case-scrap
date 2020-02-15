@@ -1,11 +1,7 @@
 const express = require('express');
 const path = require('path');
-const cors = require('cors');
 const puppeteer = require('puppeteer');
 const app = express();
-
-app.use(cors());
-app.use(express.json());
 
 app.get('/', (req, res) => {
     res.status(200).sendFile(path.join(__dirname + '/client/index.html'));
@@ -13,7 +9,6 @@ app.get('/', (req, res) => {
 
 app.get('/api/:court/:caseID', async (req, res) => {
     const { court, caseID } = req.params;
-    console.log(court + caseID);
     const data = await getCaseDate(court, caseID);
     const info = {
         date: data[0],

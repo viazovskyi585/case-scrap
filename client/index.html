@@ -92,9 +92,6 @@
       submitButton.addEventListener("click", function() {
         const court = select.value;
         const caseID = encodeURIComponent(input.value);
-
-        console.log(court + caseID);
-
         getData(court, caseID);
       });
 
