@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-wrapper {
+            margin-top: 25px;
+        }
+
+        table, th, td {
+            border: 1px solid gray;
+            border-collapse: collapse;
+        }
+
+        .info {
+            margin-top: 25px;
+        }
+
+        .preloader > img {
+            display: block;
+            margin: 0 auto;
+            width: 90px;
+            height: auto;
+        }
+
+        .preloader.hidden {
+            display: none;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <div class="form-wrapper">
+        <label for="court">Суд:</label>
+        <select name="court" id="court" class="select js-select">
+            <option value="1522">Приморський районний суд м. Одеси</option>
+            <option value="1512">Київський районний суд м. Одеси</option>
+        </select>
+        <label for="case-id">Номер справи:</label>
+        <input type="text" id="case-id" class="case js-case">
+        <button type="button" class="js-submit">Пошук</button>
+    </div>
+
+    <table class="info">
+        <thead>
+        <tr role="row">
+            <th tabindex="0" rowspan="1" colspan="1">Дата/Час</th>
+            <th tabindex="0" rowspan="1" colspan="1">Склад суду</th>
+            <th tabindex="0" rowspan="1" colspan="1">Єдиний унікальний<br>номер справи</th>
+            <th tabindex="0" rowspan="1" colspan="1">Сторони по справі</th>
+            <th tabindex="0" rowspan="1" colspan="1">Суть позову</th>
+            <th tabindex="0" rowspan="1" colspan="1">Форма судочинства</th>
+            <th tabindex="0" rowspan="1" colspan="1">Зал судових засідань</th>
+        </tr>
+        </thead>
+        <tbody class="js-info-container">
+        </tbody>
+    </table>
+    <div class="preloader hidden">
+        <img src="https://i.pinimg.com/originals/d3/ce/d9/d3ced9489ad92112ec192b9b0a157abb.gif"
+             alt="">
+    </div>
+
+    <script>
+      "use strict";
+      const select = document.querySelector(".js-select");
+      const input = document.querySelector(".js-case");
+      const submitButton = document.querySelector(".js-submit");
+      const infoContainer = document.querySelector(".js-info-container");
+      const preloader = document.querySelector('.preloader');
+
+      submitButton.addEventListener("click", function() {
+        const court = select.value;
+        const caseID = encodeURIComponent(input.value);
+
+        console.log(court + caseID);
+
+        getData(court, caseID);
+      });
+
+      const getData = async (court, caseID) => {
+        submitButton.disabled = true;
+        preloader.classList.remove('hidden');
+        const data = await fetch(`/api/${court}/${caseID}`);
+        const info = await data.json();
+
+        const row = `
+          <tr role="row">
+            <th tabindex="0" rowspan="1" colspan="1">${info.date}</th>
+            <th tabindex="0" rowspan="1" colspan="1">${info.name}</th>
+            <th tabindex="0" rowspan="1" colspan="1">${info.id}</th>
+            <th tabindex="0" rowspan="1" colspan="1">${info.sides}</th>
+            <th tabindex="0" rowspan="1" colspan="1">${info.content}</th>
+            <th tabindex="0" rowspan="1" colspan="1">${info.type}</th>
+            <th tabindex="0" rowspan="1" colspan="1">${info.hall}</th>
+        </tr>
+          `;
+        infoContainer.innerHTML += row;
+        submitButton.disabled = false;
+        preloader.classList.add('hidden');
+      };
+
+    </script>
+</div>
+</body>
+</html>
