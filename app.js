@@ -1,13 +1,15 @@
-const express = require('express');
-const path = require('path');
-const puppeteer = require('puppeteer');
+const express = require("express");
+const path = require("path");
+const puppeteer = require("puppeteer");
 const app = express();
 
-app.get('/', (req, res) => {
-    res.status(200).sendFile(path.join(__dirname + '/client/index.html'));
-});
+/* app.get("/", (req, res) => {
+    res.status(200).sendFile(path.join(__dirname + "/client/index.html"));
+}); */
 
-app.get('/api/:court/:caseID', async (req, res) => {
+app.use(express.static("./client"));
+
+app.get("/api/:court/:caseID", async (req, res) => {
     const { court, caseID } = req.params;
     const data = await getCaseDate(court, caseID);
     const info = {
@@ -23,21 +25,21 @@ app.get('/api/:court/:caseID', async (req, res) => {
 });
 
 app.listen(8000, () => {
-    console.log('App running on port 8000 👓');
+    console.log("App running on port 8000 👓");
 });
 
 const getCaseDate = async (court, caseID) => {
     const caseIDEncoded = encodeURI(caseID);
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     await page.goto(`https://pm.od.court.gov.ua/sud${court}/gromadyanam/csz/`, {
-        waitUntil: 'networkidle0'
+        waitUntil: "networkidle0"
     });
-    await page.click('#cleardate');
-    await page.type('#filter', caseIDEncoded);
+    await page.click("#cleardate");
+    await page.type("#filter", caseIDEncoded);
 
     const data = await page.evaluate(() => {
-        const tds = document.querySelectorAll('#assignments tr.odd td');
+        const tds = document.querySelectorAll("#assignments tr.odd td");
         return Array.from(tds).map(v => v.textContent);
     });
 

@@ -1,0 +1,38 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-wrapper {
+    margin-top: 25px;
+}
+
+table,
+th,
+td {
+    border: 1px solid gray;
+    border-collapse: collapse;
+}
+
+.info {
+    margin-top: 25px;
+}
+
+.preloader > img {
+    display: block;
+    margin: 0 auto;
+    width: 90px;
+    height: auto;
+}
+
+.preloader.hidden {
+    display: none;
+}
